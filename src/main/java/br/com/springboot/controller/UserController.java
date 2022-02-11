@@ -1,18 +1,47 @@
 package br.com.springboot.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.springboot.model.User;
+import br.com.springboot.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/")
 public class UserController {
 
-	@GetMapping("users")
-	public User getUsers() {
-		User user = new User();
-		return user;
-	}
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping("/")
+    public String home() {
+        return "Página Oficial";
+    }
+
+    @GetMapping("/users-list")
+    public List<User> getListUsers() {
+       return userRepository.findAll();
+    }
+
+    @GetMapping("/user/{id}")
+    public User getUserById(@PathVariable(value = "id") Long id){
+        return userRepository.findById(id).get();
+    }
+
+    @PostMapping("/user")
+    public User saveUser(@RequestBody User user){
+        return userRepository.save(user);
+    }
+
+    @PutMapping("/user/{id}")
+    public void alterUser(@PathVariable(value = "id") Long id, @RequestBody User user){
+        User userFind = userRepository.getById(id);
+
+
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void deleteUser(@PathVariable(value = "id") Long id){
+        userRepository.deleteById(id);
+    }
 }
