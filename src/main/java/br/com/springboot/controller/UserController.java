@@ -2,6 +2,7 @@ package br.com.springboot.controller;
 
 import br.com.springboot.model.User;
 import br.com.springboot.repository.UserRepository;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,15 +30,26 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public User saveUser(@RequestBody User user){
+    public User createUser(@RequestBody User user){
         return userRepository.save(user);
     }
 
     @PutMapping("/user/{id}")
-    public void alterUser(@PathVariable(value = "id") Long id, @RequestBody User user){
+    public User updateUser(@PathVariable(value = "id") Long id, @RequestBody User user){
         User userFind = userRepository.getById(id);
 
+        try {
+            if(userFind != null){
+                userFind.setName(user.getName());
+                userFind.setEmail(user.getEmail());
+                userFind.setPassword(user.getPassword());
 
+                return userRepository.save(userFind);
+            }
+        }catch (Exception e) {
+            System.out.println("Failed to find user");
+        }
+        return null;
     }
 
     @DeleteMapping("/user/{id}")
